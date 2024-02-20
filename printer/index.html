@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Canvas tutorial</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="tutorial" width="1024" height="1024"></canvas>
+    <script>
+      function draw() {
+        const canvas = document.getElementById("tutorial");
+        if (canvas.getContext) {
+          const ctx = canvas.getContext("2d");
+          ctx.fillStyle = "rgb(200 0 0)";
+          ctx.fillRect(10, 10, 50, 50);
+
+          ctx.fillStyle = "rgb(0 0 200 / 50%)";
+          ctx.fillRect(30, 30, 50, 50);
+
+            const background = new Image()
+            background.onload = () => {
+                ctx.save();
+                ctx.drawImage(background, 0, 0, 2048, 1024);                
+                ctx.restore();
+            };
+            background.src = "./background_v1.png";
+
+            const printer = new Image()
+            printer.onload = () => {                
+                ctx.save();
+                ctx.drawImage(printer, 0, 0, 80, 80);
+                ctx.restore();
+            };
+            printer.src = "./printer.png";
+        //   ctx.drawImage(img, 0, 0);
+        }
+      }
+      window.addEventListener("load", draw);
+    </script>
+    <img src="./printer.png" height="80">
+  </body>
+</html>
