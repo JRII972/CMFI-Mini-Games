@@ -1,5 +1,5 @@
 // import './style.css'
-import {resources} from "./src/Resource.js";
+import {resources, wordResources} from "./src/Resource.js";
 import {Sprite} from "./src/Sprite.js";
 import {Vector2} from "./src/Vector2.js";
 import {GameLoop} from "./src/GameLoop.js";
@@ -10,9 +10,11 @@ import {Hero} from "./src/objects/Hero/Hero.js";
 import {Camera} from "./src/Camera.js";
 import {Rod} from "./src/objects/Rod/Rod.js";
 import {Inventory} from "./src/objects/Inventory/Inventory.js";
-import {WordPrinterButton, WORD_RECTOVERSO_MENU} from "./src/objects/Word/Word.js";
+import {WORD_RECTOVERSO_MENU_1, WORD_RECTOVERSO_MENU} from "./src/objects/Word/Word.js";
 import {FillText} from "./src/TextObject.js";
 import { ArrowBottom } from "./src/objects/helpers/Arrow.js";
+import { ON_CLIC, ON_HOVER, events } from "./src/Events.js";
+import { WordMenuTest } from "./src/objects/Word/WordMenu.js";
 
 // Grabbing the canvas to draw to
 const canvas = document.querySelector("#game-canvas");
@@ -49,6 +51,7 @@ mainScene.addChild(camera);
 
 const rod = new Rod(gridCells(7), gridCells(6))
 mainScene.addChild(rod);
+// mainScene.addChild(WordMenuTest);
 
 const inventory = new Inventory();
 
@@ -56,22 +59,26 @@ const inventory = new Inventory();
 // Add an Input class to the main scene
 mainScene.input = new Input();
 
+canvas.onmousemove = function(e) {
+  var r = canvas.getBoundingClientRect(),
+      x = e.clientX - r.left, y = e.clientY - r.top;
+  events.emitOnHover({
+    mouseX : x, mouseY : y, boundingClientRect: r, toFalse: false
+  })
+}
+canvas.onclick = function(e) {
+  var r = canvas.getBoundingClientRect(),
+  x = e.clientX - r.left, y = e.clientY - r.top;
+  events.emitOnClick({
+    mouseX : x, mouseY : y
+  })
+};
 
 // Establish update and draw loops
 const update = (delta) => {
   mainScene.stepEntry(delta, mainScene)
 
-
-  canvas.onmousemove = function(e) {
-    var r = canvas.getBoundingClientRect(),
-        x = e.clientX - r.left, y = e.clientY - r.top;
-    mainScene.checkHover({
-      mouseX:x, mouseY:y, toFalse:false
-    })
-    WORD_RECTOVERSO_MENU.checkHover({
-      mouseX:x, mouseY:y, toFalse:false
-    })
-  }
+  
 };
 const draw = () => {
 
@@ -94,7 +101,7 @@ const draw = () => {
 
   // Restore to original state
   ctx.restore();
-  WORD_RECTOVERSO_MENU.draw(ctx, 35, 350)
+  WordMenuTest.draw(ctx, 0,0)
   
   // Draw anything above the game world
   inventory.draw(ctx, 0, 0)

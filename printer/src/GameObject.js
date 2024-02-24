@@ -1,12 +1,12 @@
 import {Vector2} from "./Vector2.js";
 import {events} from "./Events.js";
-import { HoverHelper } from "./helpers/HoverHelper.js";
+import { Clickable } from "./helpers/HoverHelper.js";
 import { Sprite } from "./Sprite.js";
-import { resources } from "./Resource.js";
+import { resources, wordResources } from "./Resource.js";
 
-export class GameObject extends HoverHelper {
-  constructor({ position }) {
-    super({});
+export class GameObject extends Clickable {
+  constructor({ position, checkHover = false }) {
+    super({checkHover});
     this.position = position ?? new Vector2(0, 0);
     this.children = [];
     this.parent = null;
@@ -14,6 +14,9 @@ export class GameObject extends HoverHelper {
     this.width = 0;
     this.hight = 0;
     this.scale = 1;
+    this.drawPosX = this.position.x
+    this.drawPosY = this.position.y
+    
   }
 
   // First entry point of the loop
@@ -88,16 +91,15 @@ export class GameObject extends HoverHelper {
 
   checkHover({mouseX, mouseY, toFalse}) {
     this.isHovered = false
-    this.children.forEach((child) => {
-      if (child.resource == resources.images.word_box) {
-        console.log('here')
-      }
-      if ( child.checkHover({mouseX, mouseY, toFalse}) ) {
-        if (!this.isHovered && child.isHovered) {
-          this.isHovered = true
+    if ( this.children ){
+      this.children.forEach((child) => {
+        if ( child.checkHover({mouseX, mouseY, toFalse}) ) {
+          if (!this.isHovered && child.isHovered) {
+            this.isHovered = true
+          }
         }
-      }
-    });
+      }); 
+    }
     if (toFalse) {
       this.isHovered = false
     } else if (!this.isHovered){
@@ -106,12 +108,12 @@ export class GameObject extends HoverHelper {
           (this.drawPosY < mouseY) && ( mouseY < (this.drawPosY + this.hight))
         ) {
           this.isHovered = true
-        }
+        } 
     }
     if (this.isHovered) {
       this.onHover()
     }
-  }
     
+  }
   
 }

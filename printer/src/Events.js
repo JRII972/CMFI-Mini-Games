@@ -1,3 +1,6 @@
+const ON_HOVER = "ON_HOVER";
+const ON_CLIC = "ON_CLIC";
+
 class Events {
   callbacks = [];
   nextId = 0;
@@ -13,6 +16,11 @@ class Events {
 
   // subscribe to something happening
   on(eventName, caller, callback) {
+    for (const event in this.callbacks) {
+      if ((event.caller == caller) && (event.eventName == eventName) && (event.callback == callback) ) {
+        return event.id;
+      }
+    }
     this.nextId += 1;
     this.callbacks.push({
       id: this.nextId,
@@ -33,8 +41,35 @@ class Events {
         (stored) => stored.caller !== caller,
     );
   }
+  unsubscribeFromEvent(caller, eventName) {
+    this.callbacks = this.callbacks.filter(
+        (stored) => !((stored.caller == caller) && (stored.eventName == eventName)),
+    );
+  }
 
+  onHover( caller, callback ){
+    this.on(ON_HOVER, caller, callback)
+  }
+  onClick( caller, callback ){
+    this.on(ON_CLIC, caller, callback)
+  }
+  
+  emitOnHover(value) {
+    this.callbacks.forEach(stored => {
+      if (stored.eventName === ON_HOVER) {
+        stored.caller[stored.callback.name](value)
+      }
+    })
+  }
+  emitOnClick(value) {
+    this.callbacks.forEach(stored => {
+      if (stored.eventName === ON_CLIC) {
+        stored.caller[stored.callback.name](value)
+      }
+    })
+  }
 
 }
 
 export const events = new Events();
+export { ON_CLIC, ON_HOVER}

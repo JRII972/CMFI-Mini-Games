@@ -1,5 +1,6 @@
 import {Vector2} from "./Vector2.js";
 import {GameObject} from "./GameObject.js";
+import { wordResources } from "./Resource.js";
 
 export class Sprite extends GameObject {
   constructor({
@@ -12,12 +13,19 @@ export class Sprite extends GameObject {
       position, // where to draw it (top left corner)
       animations,
       onHoverResource,
+      checkHover = false,
+      name = "New Sprite"
     }) {
+    if (onHoverResource) {
+      checkHover = true
+    }
+
     super({
-      name
+      name,
+      checkHover
     });
     this.resource = resource;
-    this.onHoverResource = onHoverResource ?? null;
+    this.onHoverResource = onHoverResource;
     this.frameSize = frameSize ?? new Vector2(16,16);
     this.hFrames = hFrames ?? 1;
     this.vFrames = vFrames ?? 1;
@@ -30,6 +38,8 @@ export class Sprite extends GameObject {
     
     this.width = this.frameSize.x * this.scale;  
     this.hight = this.frameSize.y * this.scale;
+
+
   }
 
   buildFrameMap() {
@@ -56,7 +66,7 @@ export class Sprite extends GameObject {
   drawImage(ctx, x, y) {
     var resource = this.resource;
     if (this.isHovered){
-      if (this.onHoverResource != null) { 
+      if (this.onHoverResource) { 
         resource = this.onHoverResource
       }
     }
@@ -92,7 +102,6 @@ export class Sprite extends GameObject {
   }
   
   onHover(){
-    console.log('On Hover ' + this.width)
   }
 
 }
