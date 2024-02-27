@@ -9,7 +9,11 @@ class Events {
   emit(eventName, value) {
     this.callbacks.forEach(stored => {
       if (stored.eventName === eventName) {
-        stored.callback(value)
+        try {
+          stored.caller[stored.callback.name](value)
+        } catch (error) {
+          stored.callback(value)
+        }
       }
     })
   }
@@ -28,6 +32,10 @@ class Events {
       caller,
       callback,
     });
+
+    if ( callback.name == "checkClick" && eventName == ON_HOVER){
+      console.log("false added")
+    }
     return this.nextId;
   }
 

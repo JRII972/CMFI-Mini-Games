@@ -35,6 +35,10 @@ export class HoverHelper {
       onHover() {
         //
       }
+
+      initOnHover() {
+        events.onHover(this, this.checkHover)
+      }
       
 }
 
@@ -44,6 +48,10 @@ export class Clickable extends HoverHelper {
     // events.onClick(this, this.checkClick)
   } 
 
+  initOnClick() {
+    events.onClick(this, this.checkClick)
+  }
+
   checkClick({mouseX, mouseY}){
     this.checkHover({mouseX, mouseY})
     if (this.isHovered){
@@ -52,6 +60,5 @@ export class Clickable extends HoverHelper {
   }
   
   onClick() {
-    console.log(this)
   }
 }

@@ -1,59 +1,38 @@
-import { ON_CLIC, events } from "../../Events.js";
+import { ON_CLIC, ON_HOVER, events } from "../../Events.js";
 import { GameObject } from "../../GameObject.js";
 import { wordResources } from "../../Resource.js";
 import { Vector2 } from "../../Vector2.js";
-import { WORD_RECTOVERSO_MENU, WORD_RECTOVERSO_MENU_1, WordPrinterButton } from "./Word.js";
+import { WORD_RECTOVERSO_MENU, WORD_RECTOVERSO_MENU_1, WordPrinterButton } from "./WordPrinterButton.js";
 
 class WordMenu extends GameObject {
-    constructor({x, y, scale}) {
+    constructor({x, y, scale, items, isSmallMenu = false}) {
         super({
           name: "WordPrinterMenu",
           position: new Vector2(x,y),
         });
         
         this.scale = scale
-        this.items = [
-          {
-            index: 1,
-            button: new WordPrinterButton({
-              x: 0, 
-              y: 0, 
-              scale: 1, 
-              image: wordResources.images.word_recto, 
-              main_text: "Impression Recto verso", 
-              second_text: "Imprimer uniquement sur..."
-            }),
-            menu: new WordPrinterButton({
-              x: 0, 
-              y: 0, 
-              scale: 1, 
-              image: wordResources.images.word_recto, 
-              main_text: "Impression Recto verso", 
-              second_text: "Imprimer uniquement sur..."
-            }),
-            selected: true
-          },
-          {
-            index: 2,
-            button: WORD_RECTOVERSO_MENU_1,
-            menu: new WordPrinterButton({
-              x: 0, 
-              y: 0, 
-              scale: 1, 
-              image: wordResources.images.word_recto, 
-              main_text: "Impression Recto", 
-              second_text: "Imprimer uniquement sur..."
-            }),
-          }
-        ]
+        this.isSmallMenu = isSmallMenu
         // this.items.forEach(wordPrinterButton => {
         //   wordPrinterButton.parent = this
         // });
         
         this.open = false
-        
+        var index = 1
+        this.items = items
         this.items.forEach( item => {
+          item.index = index
+          index += 1
+          item.x = 0
+          item.y = 0
+          item.scale = this.scale
+          item.isSmallMenu = this.isSmallMenu
+          item.button = new WordPrinterButton(item)
+          item.menu = new WordPrinterButton(item)
+          
           item.button.initOnHover();
+          
+          events.unsubscribeFromEvent(item.menu, ON_HOVER) // TODO: FIX on hove on first open
           item.menu.toMenuItem();
           item.menu.onClick = function(value) {
             if ( this.parent ){
@@ -61,7 +40,6 @@ class WordMenu extends GameObject {
             }
           }
           item.menu.parent = this
-          events.onClick(item.menu, item.menu.checkClick)
           item.button.onClick = function(value) {
             if ( this.parent ){
               this.parent.openMenu(this)
@@ -72,13 +50,24 @@ class WordMenu extends GameObject {
         this.items.forEach( item => {
           events.unsubscribeFromEvent(item.button, ON_CLIC)
           if (item.selected){
-            events.onClick(item.button, item.button.checkClick)
+            item.button.initOnClick()
           } 
         })
 
         events.onClick(this, this.clickOutside)
       }   
 
+
+    updateScale(scale){
+      this.children = []
+      this.scale = scale
+      this.items.forEach(item => {
+        item.button.updateScale(this.scale)
+        item.button.toButton()
+        item.menu.updateScale(this.scale)
+        item.menu.toMenuItem()
+      });
+    }
     
     close() {
       this.children.forEach( child => this.removeChild(child))
@@ -106,8 +95,19 @@ class WordMenu extends GameObject {
       
       if (this.open){
         this.items.forEach((item) => {
-          item.menu.draw(ctx, this.drawPosX, this.drawPosY + (item.button.hight-4) * item.index)
+          events.onClick(item.menu, item.menu.checkClick)
+          ctx.fillStyle = "rgb(226 225 229)";
+          ctx.fillRect(this.drawPosX-1, this.drawPosY + (item.menu.height) * item.index -2, item.menu.width +2, item.menu.height +2);
+          item.menu.initOnHover()
+          item.menu.draw(ctx, this.drawPosX, this.drawPosY + (item.menu.height) * item.index-1)
+
+          
         });
+      } else {
+        this.items.forEach((item) => {
+          events.unsubscribeFromEvent(item.menu, ON_CLIC)
+          events.unsubscribeFromEvent(item.menu, ON_HOVER)
+        })
       }
     }
 
@@ -146,8 +146,98 @@ class WordMenu extends GameObject {
 
 }
 
-export const WordMenuTest = new WordMenu({
+
+export const WordMenuImprimante = new WordMenu({
   x : 0,
   y : 0,
-  scale : 1
+  scale : 0.75,
+  isSmallMenu: true,
+  items: [
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Adobe PDF", 
+      second_text: "Prête",
+    },
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Microsoft Print to PDF", 
+      second_text: "Prête",
+      selected: true
+    },
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "OneNote Desctop", 
+      second_text: "Prête",
+    }
+  ]
+})
+export const WordMenuAssemblage = new WordMenu({
+  x : 0,
+  y : 0,
+  scale : 0.75,
+  isSmallMenu: true,
+  items: [
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Assemblées", 
+      second_text: "1,2,3    1,2,3      1,2,3",
+      selected: true
+    },
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Non assemblées", 
+      second_text: "1,1,1    2,2,2      3,3,3",
+    }
+  ]
+})
+export const WordMenuRectoVerso = new WordMenu({
+  x : 0,
+  y : 0,
+  scale : 0.75,
+  items: [
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Impression recto", 
+      second_text: "Imprimer uniquement sur un côté de la page",
+      selected: true
+    },
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Imprimer recto verso", 
+      second_text: "...",
+    },
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Imprimer manuellement en recto verso", 
+      second_text: "Recharger le papier lorsque le systême vous invite à imprimer le verso",
+    }
+  ]
+})
+export const WordMenuNombrePage = new WordMenu({
+  x : 0,
+  y : 0,
+  scale : 0.75,
+  items: [
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Impression toutes les pages", 
+      second_text: "L'ensemble du document",
+      selected: true
+    },
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Imprimer la selection", 
+      second_text: "Seulement le contenu sélectionné",
+    },
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Imprimer la page active", 
+      second_text: "Seulement cette page",
+    },
+    {
+      image: wordResources.images.word_recto, 
+      main_text: "Impression personnalisée", 
+      second_text: "Enter des pages, des sections, ou des plages spécifiques"
+    }
+  ]
 })

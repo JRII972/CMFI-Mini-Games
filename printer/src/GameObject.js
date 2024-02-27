@@ -5,18 +5,25 @@ import { Sprite } from "./Sprite.js";
 import { resources, wordResources } from "./Resource.js";
 
 export class GameObject extends Clickable {
-  constructor({ position, checkHover = false }) {
+  constructor({ position, checkHover = false, scale = 1 }) {
     super({checkHover});
     this.position = position ?? new Vector2(0, 0);
     this.children = [];
     this.parent = null;
     this.hasReadyBeenCalled = false;
     this.width = 0;
-    this.hight = 0;
-    this.scale = 1;
+    this.height = 0;
+    this.scale = scale;
     this.drawPosX = this.position.x
     this.drawPosY = this.position.y
-    
+    this.autoSize = true
+  }
+
+  updateScale(scale){
+    this.children.forEach(child => {
+      child.scale = child.scale / this.scale * scale
+    });
+    this.scale = scale
   }
 
   // First entry point of the loop
@@ -72,12 +79,12 @@ export class GameObject extends Clickable {
   addChild(gameObject) {
     gameObject.parent = this;
     this.children.push(gameObject);
-    if (gameObject instanceof Sprite){
+    if ((gameObject instanceof Sprite) && (this.autoSize)){
       if ( (gameObject.position.x + gameObject.frameSize.x * gameObject.scale) > this.width) {
         this.width = gameObject.position.x + gameObject.frameSize.x * gameObject.scale
       }
-      if ( (gameObject.position.y + gameObject.frameSize.y * gameObject.scale) > this.hight) {
-        this.hight = gameObject.position.y + gameObject.frameSize.y * gameObject.scale
+      if ( (gameObject.position.y + gameObject.frameSize.y * gameObject.scale) > this.height) {
+        this.height = gameObject.position.y + gameObject.frameSize.y * gameObject.scale
       }
     }
   }
@@ -105,7 +112,7 @@ export class GameObject extends Clickable {
     } else if (!this.isHovered){
         if (
           (this.drawPosX < mouseX) && (mouseX < (this.drawPosX + this.width )) &&
-          (this.drawPosY < mouseY) && ( mouseY < (this.drawPosY + this.hight))
+          (this.drawPosY < mouseY) && ( mouseY < (this.drawPosY + this.height))
         ) {
           this.isHovered = true
         } 

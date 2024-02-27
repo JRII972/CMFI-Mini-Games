@@ -22,7 +22,8 @@ export class Sprite extends GameObject {
 
     super({
       name,
-      checkHover
+      checkHover,
+      scale
     });
     this.resource = resource;
     this.onHoverResource = onHoverResource;
@@ -31,15 +32,23 @@ export class Sprite extends GameObject {
     this.vFrames = vFrames ?? 1;
     this.frame = frame ?? 0;
     this.frameMap = new Map();
-    this.scale = scale ?? 1;
     this.position = position ?? new Vector2(0,0);
     this.animations = animations ?? null;
     this.buildFrameMap();
     
     this.width = this.frameSize.x * this.scale;  
-    this.hight = this.frameSize.y * this.scale;
+    this.height = this.frameSize.y * this.scale;
 
 
+  }
+
+  updateScale(scale){
+    this.width = this.frameSize.x * scale;  
+    this.height = this.frameSize.y * scale;
+    this.children.forEach(child => {
+      child.scale = child.scale / this.scale * scale
+    });
+    this.scale = scale
   }
 
   buildFrameMap() {
