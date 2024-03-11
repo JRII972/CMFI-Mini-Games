@@ -35,6 +35,7 @@ export const resources = new Resources({
   skyView: "./picture/background_v1.png",
 
   anne: "./public/asset/personnage/anne.png",
+  patrick: "./public/asset/personnage/patrick.png",
 });
 
 const WORD_ASSET_PATH = "./public/asset/word/"

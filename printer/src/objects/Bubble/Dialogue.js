@@ -1,3 +1,6 @@
+import { resources } from "../../Resource.js"
+import { Sprite } from "../../Sprite.js"
+import { Vector2 } from "../../Vector2.js"
 import { Question } from "../../helpers/QuizzHelper.js"
 import { Bubble } from "./Bubble.js"
 
@@ -56,10 +59,19 @@ export class Dialogue {
         this.bubble.updateTitle( this.data.dialogues[this.actualDialogue].dialogue[this.diagStep].title ?? this.data.dialogues[this.actualDialogue].dialogue[this.diagStep].personne + ' :' )
 
         if ( !this.data.dialogues[this.actualDialogue].dialogue[this.diagStep].personne ){
+            this.bubble.updateTitle( "Vous" )
+            this.bubble.personne = new Sprite({
+                resource: resources.images.patrick,
+                frameSize: new Vector2(1024,1024)
+            })
             this.bubble.update( {
                 side: 'left'
             } )
         } else {
+            this.bubble.personne = new Sprite({
+                resource: resources.images.anne,
+                frameSize: new Vector2(1024,1024)
+            })
             this.bubble.update( {
                 side: 'right'
             } )

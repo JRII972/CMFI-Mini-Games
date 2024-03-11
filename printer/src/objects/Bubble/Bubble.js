@@ -25,7 +25,7 @@ export class Bubble extends GameObject{
       textColor = "black",
       state,
       question,
-      dialogue
+      dialogue, personne
     }) {
 
     super({
@@ -74,7 +74,7 @@ export class Bubble extends GameObject{
     // })
 
     
-    this.personne = new Sprite({
+    this.personne = personne ?? new Sprite({
         resource: resources.images.anne,
         frameSize: new Vector2(1024,1024)
     })
@@ -86,15 +86,15 @@ export class Bubble extends GameObject{
    
   }
 
-  update({width, height, position, side}){
+  update({width, height, position, side, reset = false}){
 
-    this.width = height;  
-    this.height = width;
+    this.width = height ?? this.width;  
+    this.height = width ?? this.height;
     this.side = side ?? this.side ?? 'left'
     
     if ( 
-        (this.height == undefined) &&
-        (this.width == undefined) 
+       ( (this.height == undefined) &&
+        (this.width == undefined) ) || reset
     ){
         this.height = this.canvas.height * .35
         this.width = this.canvas.width * .8
