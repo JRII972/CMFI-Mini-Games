@@ -33,6 +33,8 @@ export const resources = new Resources({
   rod: "./public/sprites/rod.png",
   printer: "./1x/printer_sprite.png",
   skyView: "./picture/background_v1.png",
+
+  anne: "./public/asset/personnage/anne.png",
 });
 
 const WORD_ASSET_PATH = "./public/asset/word/"

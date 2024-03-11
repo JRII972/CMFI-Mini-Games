@@ -1,3 +1,5 @@
+import { TextObject } from "./TextObject.js";
+
 const ON_HOVER = "ON_HOVER";
 const ON_CLIC = "ON_CLIC";
 
@@ -20,6 +22,9 @@ class Events {
 
   // subscribe to something happening
   on(eventName, caller, callback) {
+    if ( caller instanceof TextObject ){
+      console.log('yolo')
+    }
     for (const event in this.callbacks) {
       if ((event.caller == caller) && (event.eventName == eventName) && (event.callback == callback) ) {
         return event.id;

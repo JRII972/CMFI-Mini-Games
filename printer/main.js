@@ -13,6 +13,8 @@ import {Inventory} from "./src/objects/Inventory/Inventory.js";
 import { ON_CLIC, ON_HOVER, events } from "./src/Events.js";
 import { WordInterface } from './src/objects/Word/Word.js'
 import { GameRender } from "./src/GameRender.js";
+import { Bubble } from "./src/objects/Bubble/Bubble.js";
+import { Dialogue } from "./src/objects/Bubble/Dialogue.js";
 
 // Grabbing the canvas to draw to
 const canvas = document.querySelector("#game-canvas");
@@ -50,6 +52,22 @@ canvas.onclick = function(e) {
 };
 
 
+const bubble = new Bubble({
+  text : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+  canvas: canvas,
+  title: "Boubamda",
+  strokeStyle: "#B4E1FF",
+  fillStyle: "#FFF1D7",
+  lineWidth: 5,
+  textColor: "#1B4079",
+})
+
+const d = new Dialogue({
+  dialogueJson: './public/scénario/service informatique.json',
+  canvas: canvas
+})
+
+d.init()
 
 // Establish update and draw loops
 const update = (delta) => {
@@ -82,6 +100,8 @@ const draw = () => {
 
   // ctx.fillStyle = "rgb(0 0 200 / 50%)";
   // ctx.fillRect(30, 30, 50, 50);
+
+  d.draw(ctx, 0, 0)
 
 }
 
