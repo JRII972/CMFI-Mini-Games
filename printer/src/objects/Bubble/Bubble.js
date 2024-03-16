@@ -25,7 +25,7 @@ export class Bubble extends GameObject{
       textColor = "black",
       state,
       question,
-      dialogue, personne
+      dialogue, personne,
     }) {
 
     super({

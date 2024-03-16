@@ -2,6 +2,7 @@ import { TextObject } from "./TextObject.js";
 
 const ON_HOVER = "ON_HOVER";
 const ON_CLIC = "ON_CLIC";
+const SCREENRESIZE = 'SCREENRESIZE';
 
 class Events {
   callbacks = [];
@@ -85,4 +86,4 @@ class Events {
 }
 
 export const events = new Events();
-export { ON_CLIC, ON_HOVER}
+export { ON_CLIC, ON_HOVER, SCREENRESIZE}

@@ -1,3 +1,5 @@
+import { Vector2 } from "./Vector2.js";
+
 class Resources {
   constructor(toLoad) {
     // Everything we plan to download
@@ -9,14 +11,51 @@ class Resources {
     // Load each image
     Object.keys(this.toLoad).forEach(key => {
       const img = new Image();
-      img.src = this.toLoad[key];
-      this.images[key] = {
-        image: img,
-        isLoaded: false
-      }
+      if ( typeof this.toLoad[key] === "string" ){
+        img.src = this.toLoad[key];
+        this.images[key] = {
+          image: img,
+          isLoaded: false
+        }
+      }else {
+        img.src = this.toLoad[key].src;
+        this.images[key] = this.toLoad[key];
+        this.images[key].image = img;
+        this.images[key].isLoaded = false;
+      }      
       img.onload = () => {
         this.images[key].isLoaded = true;
       }
+    })
+  }
+}
+
+class ResourcesAudio {
+  constructor(toLoad) {
+    // Everything we plan to download
+    this.toLoad = toLoad
+
+    // A bucket to keep all of our audio
+    this.audio = {};
+    
+
+    // Load each image
+    Object.keys(this.toLoad).forEach(key => {
+      if ( typeof this.toLoad[key] === "string" ){
+        const audio = new Audio(this.toLoad[key]);
+        audio.volume = 0.08;
+        this.audio[key] = {
+          audio: audio,
+          isLoaded: false
+        }
+      }else {
+        const audio = new Audio(this.toLoad[key].url);
+        audio.volume = this.toLoad[key].volume ?? 0.08;
+        this.audio[key] = this.toLoad[key];
+        this.audio[key].audio = audio;
+        this.audio[key].isLoaded = false;
+      }    
+      
     })
   }
 }
@@ -36,6 +75,8 @@ export const resources = new Resources({
 
   anne: "./public/asset/personnage/anne.png",
   patrick: "./public/asset/personnage/patrick.png",
+
+  loader: "./public/asset/load-loading.gif",
 });
 
 const WORD_ASSET_PATH = "./public/asset/word/"
@@ -60,3 +101,58 @@ export const wordResources = new Resources({
   //Page
   pageNumResp: WORD_ASSET_PATH + "page/Qu’est-ce que le numérique responsable.png"
 });
+
+
+// Personnage
+class Personnage extends Resources{
+  constructor(toLoad, default_image = null) {
+    super(toLoad)
+    this.default_image = default_image
+  }
+
+  get(name) {
+    if ( name in this.images ) {
+      return this.images[name]
+    } else if ( name.toLowerCase() in this.images ) {
+      return this.images[name.toLowerCase()]
+    } else {
+      if ( this.default_image in this.images ) { 
+        return this.images[this.default_image]
+      }
+      return this.default_image
+    }
+  }
+
+
+}
+
+export const PERSONNAGE = new Personnage({
+  anne: "./public/asset/personnage/anne.png",
+  patrick: "./public/asset/personnage/patrick.png",
+})
+
+export const BACKGROUND = new Personnage({
+  skyview: {
+    src: "./picture/background_v1.png",
+    frameSize: new Vector2(2048,1024),
+    offset : new Vector2()
+  },
+  laptop: {
+    src: "./public/asset/background/laptop.png",
+    frameSize: new Vector2(1792,1024),
+  },
+  laptop_plugin: {
+    src: "./public/asset/background/laptop_plugin.png",
+    frameSize: new Vector2(1792,1024),
+  },
+  laptop_no_battery: {
+    src: "./public/asset/background/laptop_no_battery.png",
+    frameSize: new Vector2(1792,1024),
+  },
+})
+
+export const AUDIO = new ResourcesAudio({
+  above: {
+    url: "./public/audio/popcorn/abovve.mp3"
+  }
+})

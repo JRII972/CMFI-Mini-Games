@@ -2,14 +2,18 @@
     "nom" : "Spécial service informatique (Baptiste) ",
     "auteur" : "Baptiste",
     "start": "start",
+    "background" : "laptop",
+    "audio" : "above",
     "dialogues" : {
         "start" : {
             "dialogue" : [
-                    {
-                        "personne" : "Anne",
+                {
+                    "background" : "laptop_plugin",
+                    "personne" : "Anne",
                         "text" : "Bonjour, j'ai un souci avec mon ordinateur. Il ne charge plus du tout."
                     },
                     {
+                        "background" : "laptop_plugin",
                         "text" : "D'accord, je vais jeter un œil. Merci de me l'avoir signalé."
                     },
                     {
@@ -31,9 +35,10 @@
                         ]
                     }
                 ],
-            "next" : ["expertise" ]
-        },
+                "next" : ["expertise" ]
+            },
         "expertise" : {
+            "background" : "laptop_no_battery",
             "dialogue" : [
                     {
                         

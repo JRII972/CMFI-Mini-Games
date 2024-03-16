@@ -14,8 +14,10 @@ export class Sprite extends GameObject {
       animations,
       onHoverResource,
       checkHover = false,
-      name = "New Sprite"
+      name = "New Sprite",
+      size
     }) {
+      
     if (onHoverResource) {
       checkHover = true
     }
@@ -25,9 +27,17 @@ export class Sprite extends GameObject {
       checkHover,
       scale
     });
+
+    this.size = size
     this.resource = resource;
     this.onHoverResource = onHoverResource;
-    this.frameSize = frameSize ?? new Vector2(16,16);
+    if ( resource ){
+      if ( resource.frameSize ) {
+        console.log('tolo')
+        this.frameSize = frameSize ?? resource.frameSize ;
+      }
+    }
+    this.frameSize = this.frameSize ?? frameSize ?? new Vector2(16,16) ;
     this.hFrames = hFrames ?? 1;
     this.vFrames = vFrames ?? 1;
     this.frame = frame ?? 0;
@@ -97,7 +107,20 @@ export class Sprite extends GameObject {
     const frameSizeX = this.frameSize.x;
     const frameSizeY = this.frameSize.y;
 
-    ctx.drawImage(
+    if ( this.size ){
+      ctx.drawImage(
+        resource.image,
+        frameCoordX,
+        frameCoordY, // Top Y corner of frame
+        frameSizeX, //How much to crop from the sprite sheet (X)
+        frameSizeY, //How much to crop from the sprite sheet (Y)
+        x, //Where to place this on canvas tag X (0)
+        y, //Where to place this on canvas tag Y (0)
+        this.size.x ?? frameSizeX * this.scale, //How large to scale it (X)
+        this.size.y ?? frameSizeY * this.scale, //How large to scale it (Y)
+      );
+    } else {
+      ctx.drawImage(
         resource.image,
         frameCoordX,
         frameCoordY, // Top Y corner of frame
@@ -108,6 +131,7 @@ export class Sprite extends GameObject {
         frameSizeX * this.scale, //How large to scale it (X)
         frameSizeY * this.scale, //How large to scale it (Y)
     );
+    }
   }
   
   onHover(){

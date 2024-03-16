@@ -10,15 +10,29 @@ import {Hero} from "./src/objects/Hero/Hero.js";
 import {Camera} from "./src/Camera.js";
 import {Rod} from "./src/objects/Rod/Rod.js";
 import {Inventory} from "./src/objects/Inventory/Inventory.js";
-import { ON_CLIC, ON_HOVER, events } from "./src/Events.js";
+import { ON_CLIC, ON_HOVER, SCREENRESIZE, events } from "./src/Events.js";
 import { WordInterface } from './src/objects/Word/Word.js'
 import { GameRender } from "./src/GameRender.js";
 import { Bubble } from "./src/objects/Bubble/Bubble.js";
 import { Dialogue } from "./src/objects/Bubble/Dialogue.js";
 
 // Grabbing the canvas to draw to
+const splash = document.getElementById('game-splash');
 const canvas = document.querySelector("#game-canvas");
 const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+addEventListener("resize", (event) => {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+
+  events.emit(SCREENRESIZE, {
+    width : window.innerWidth,
+    height : window.innerHeight,
+  })
+});
 
 // Establish the root scene
 const mainScene = new GameObject({
@@ -52,22 +66,12 @@ canvas.onclick = function(e) {
 };
 
 
-const bubble = new Bubble({
-  text : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-  canvas: canvas,
-  title: "Boubamda",
-  strokeStyle: "#B4E1FF",
-  fillStyle: "#FFF1D7",
-  lineWidth: 5,
-  textColor: "#1B4079",
-})
-
 const d = new Dialogue({
   dialogueJson: './public/scénario/service informatique.json',
   canvas: canvas
 })
 
-d.init()
+// d.init()
 
 // Establish update and draw loops
 const update = (delta) => {
@@ -108,3 +112,57 @@ const draw = () => {
 // Start the game!
 const gameLoop = new GameLoop(update, draw);
 gameLoop.start();
+
+async function setupGame(dialogueJson) {
+  const data = await fetch(dialogueJson)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error("HTTP error " + response.status);
+          }
+          return response.json();
+      })
+  
+  data.forEach(dialogue => {
+    // <div class="games">
+    //     <div class="title">NOM DU JEU</div>
+    //     <hr>
+    //     <div class="description">
+    //        <p>Proident aliqua Lorem magna ea. Amet sint quis id qui eu. Ipsum aliquip dolor consectetur pariatur officia magna. Sit amet proident pariatur velit commodo pariatur pariatur elit veniam ex mollit magna laboris ut.
+    //       </p>
+    //     </div>
+    //   </div>
+    let game = document.createElement('div')
+    game.classList.add('games')
+    let title = document.createElement('div')
+    title.classList.add('title')
+    title.append(dialogue.nom)
+    game.appendChild(title)
+    game.appendChild(document.createElement('hr'))
+    let description = document.createElement('div')
+    description.classList.add('description')
+    description.append(dialogue.description);
+    game.appendChild(description)
+    game.appendChild(document.createElement('hr'))
+    dialogue.auteurs.forEach(_a => {
+      let auteur = document.createElement('div')
+      auteur.classList.add('auteur')
+      auteur.append(_a)
+      game.appendChild(auteur)
+    })
+    game.onclick = function () {
+      startGame(dialogue.file)
+    }
+    document.getElementsByClassName('game-holder')[0].appendChild(game);
+  });
+}
+
+async function startGame(file) {
+  splash.style.display = 'none'
+  canvas.style.display = 'block'
+  console.log(file)
+  d.dialogueJson = file
+  await d.init()
+  d.start()
+} 
+
+setupGame('./public/scénario/dialogues.json')
