@@ -149,6 +149,18 @@ export const BACKGROUND = new Personnage({
     src: "./public/asset/background/laptop_no_battery.png",
     frameSize: new Vector2(1792,1024),
   },
+  bénéfice_veille: {
+    src: "./public/asset/background/bénéfice_veille.png",
+    frameSize: new Vector2(2442,1406),
+  },
+  veille_collegue_entre_bureau: {
+    src: "./public/asset/background/veille_collegue_entre_bureau.png",
+    frameSize: new Vector2(1792,1024),
+  },
+  bénéfice_veille: {
+    src: "./public/asset/background/bénéfice_veille.png",
+    frameSize: new Vector2(2442,1406),
+  },
 })
 
 export const AUDIO = new ResourcesAudio({

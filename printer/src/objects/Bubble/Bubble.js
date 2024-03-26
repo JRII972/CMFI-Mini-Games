@@ -6,6 +6,7 @@ import { Sprite } from "../../Sprite.js";
 import { ON_CLIC, events } from "../../Events.js";
 import { Question } from "../../helpers/QuizzHelper.js";
 import { readYaml } from "../../helpers/Yaml.js";
+import { Animations } from "../../Animations.js";
 
 export class Bubble extends GameObject{
   constructor({
@@ -48,6 +49,7 @@ export class Bubble extends GameObject{
     this.radius = radius
     this.side = side
     this.anwser = []
+    this.textAnimation = new Animations({ sec: 3 })
 
     this.state = state ?? "text"
     this.dialogue = dialogue
@@ -102,6 +104,13 @@ export class Bubble extends GameObject{
 
     if ( this.personne ){
         this.personne.scale = this.height / this.personne.frameSize.x 
+
+        if ( ! this.personne.resource ) {
+            this.width = this.canvas.width - 10
+        }
+        
+    } else {
+        this.width = this.canvas.width - 10
     }
 
     switch (this.side) {
@@ -126,27 +135,48 @@ export class Bubble extends GameObject{
             break;
     }
 
+    
+
     this.marginText = this.canvas.height * 0.04 + this.lineWidth
     this.updateText(this.text)
     this.updateTitle(this.title)
   }
 
   updateText(text) {
-    this.text = text;
-    this.textObject = new FillText({
-        text: this.text,
-        position: new Vector2(
-            this.marginText,
-            this.marginText * 1.5
-        ),
-        maxWidth: this.width - this.marginText * 2,
-        wrapText: true,
-        font: this.canvas.height * 0.03 + "px Aptos",
-        maxLine: 4,
-        startLine: 0,
-        fillStyle: this.textColor,
-    })
-
+    this.text = text ?? this.text ;
+    if ( this.state == "quizz" ) {
+        this.textAnimation = undefined
+        this.textObject = new FillText({
+            text: this.text,
+            position: new Vector2(
+                this.marginText,
+                this.marginText * 1.5
+            ),
+            maxWidth: this.width - this.marginText * 1.5,
+            wrapText: true,
+            font: this.canvas.height * 0.025 + "px Aptos",
+            maxLine: 4,
+            startLine: 0,
+            fillStyle: this.textColor,
+            animation: this.textAnimation
+        })
+    }else{
+        this.textAnimation = new Animations({ sec: this.text.length * 0.03 })
+        this.textObject = new FillText({
+            text: this.text,
+            position: new Vector2(
+                this.marginText,
+                this.marginText * 2
+            ),
+            maxWidth: this.width - this.marginText * 2.5,
+            wrapText: true,
+            font: this.canvas.height * 0.03 + "px Aptos",
+            maxLine: 4,
+            startLine: 0,
+            fillStyle: this.textColor,
+            animation: this.textAnimation
+        })
+    }
   }
 
   updateTitle(title) {
@@ -180,6 +210,7 @@ export class Bubble extends GameObject{
 
   setupQuizz() {
     this.state = "quizz"
+    this.updateText( this.question.text )
     this.updateTitle(this.question.question ?? this.title ?? "Question : ");
     this.anwser.forEach((anwser) => {
         events.unsubscribe(anwser)
@@ -189,15 +220,15 @@ export class Bubble extends GameObject{
     this.question.réponse.forEach((réponse, i) => {
         let text = réponse.text
         let anwser = new FillText({
-            text: text,
+            text: "▶ " + text,
             position: new Vector2(
-                this.marginText ,
+                this.marginText * 2,
                 this.marginText * 1.5
             ),
             // maxWidth: this.width - this.marginText * 2,
             wrapText: true,
             font: this.canvas.height * 0.03 + "px Aptos bold", //TODO: FIX font
-            maxWidth: this.width - this.marginText,
+            maxWidth: this.width - this.marginText * 3,
             surlignageStyle: "#1B4079",
             fillStyle: "#1B4079"
         })
@@ -325,6 +356,7 @@ export class Bubble extends GameObject{
   drawText(ctx, x, y){
     this.titleObject.draw(ctx, x,y)
     this.textObject.draw(ctx, x,y)
+    this.textAnimation.start()
   }
   
   drawQuizz(ctx, x, y) {
@@ -339,7 +371,21 @@ export class Bubble extends GameObject{
 
   checkAnwser() {
     let a = null
+
+    for (const anwser of this.anwser) {
+        for (const _anwser of this.question.réponse) {
+            if (anwser.surlignage && (anwser.id == _anwser.id)) {
+                if ( _anwser.next ) {
+                    this.dialogue.updateDialogue(_anwser.next.random())
+                }
+                return _anwser
+            }
+        }
+    }
     this.anwser.forEach((anwser) => {
+        this.question.réponse.forEach((_anwser) => {
+
+        })
         if ( (this.question.bonneRéponseID == anwser.id) && (anwser.surlignage) ){
             a = true
         } 
@@ -352,12 +398,14 @@ export class Bubble extends GameObject{
 
   valideQuizz() {
     if ( this.state == "quizz" ) {
-        switch (this.checkAnwser()) {
+        switch (this.checkAnwser().good) {
             case true:
             case false:
                 this.state = "anwser"
                 if ( this.question.conten ) {
                     this.updateText(this.question.content)
+                } else if (this.checkAnwser().next) {
+                    //
                 } else {
                     this.dialogue.nextTalk()
                 }
@@ -371,22 +419,23 @@ export class Bubble extends GameObject{
     }
   }
 
-  onHover(){
+  checkClick(){
+    this.onClick()
   }
 
   onClick() {
     if ( this.state == "quizz" ) {
-        switch (this.checkAnwser()) {
-            case true:
-            case false:
-                // this.state = "anwser"
-                // this.updateText(this.question.content)
-                break;
+        // switch (this.checkAnwser()) {
+        //     case true:
+        //     case false:
+        //         // this.state = "anwser"
+        //         // this.updateText(this.question.content)
+        //         break;
         
-            default:
-                console.log("pas de réponse");
-                break;
-        }
+        //     default:
+        //         console.log("pas de réponse");
+        //         break;
+        // }
     } else if ( this.state == "anwser" ) {
         this.dialogue.nextTalk()
     } else {

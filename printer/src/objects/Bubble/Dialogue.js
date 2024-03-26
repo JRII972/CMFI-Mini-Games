@@ -1,4 +1,4 @@
-import { SCREENRESIZE, events } from "../../Events.js"
+import { ON_CLIC, SCREENRESIZE, events } from "../../Events.js"
 import { AUDIO, BACKGROUND, PERSONNAGE, resources } from "../../Resource.js"
 import { Sprite } from "../../Sprite.js"
 import { Vector2 } from "../../Vector2.js"
@@ -36,7 +36,8 @@ export class Dialogue extends Clickable {
             fillStyle: "#FFF1D7",
             lineWidth: 5,
             textColor: "#1B4079",
-            dialogue: this
+            dialogue: this,
+            
           })
         
         this.width = this.canvas.width
@@ -116,13 +117,7 @@ export class Dialogue extends Clickable {
 
         switch (this.data.dialogues[this.actualDialogue].dialogue[this.diagStep].type) {
             case "quizz":
-                this.bubble.question = new Question({
-                        "id" : 1,
-                        "question" : this.data.dialogues[this.actualDialogue].dialogue[this.diagStep].question,
-                        "type"  : "Informatique",
-                        "réponse" : this.data.dialogues[this.actualDialogue].dialogue[this.diagStep].réponse,
-                        "content" : this.data.dialogues[this.actualDialogue].dialogue[this.diagStep].content
-                    })
+                this.bubble.question = new Question(this.data.dialogues[this.actualDialogue].dialogue[this.diagStep])
                 this.bubble.setupQuizz()
                 break;
         
@@ -163,7 +158,7 @@ export class Dialogue extends Clickable {
     nextTalk() {
         if ( this.data.dialogues[this.actualDialogue].dialogue.length <= this.diagStep + 1 ){
             if ( this.data.dialogues[this.actualDialogue].next ) {
-                this.actualDialogue = this.data.dialogues[this.actualDialogue].next
+                this.actualDialogue = this.data.dialogues[this.actualDialogue].next.random()
                 this.updateDialogue()
             }
         } else {

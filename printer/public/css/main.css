@@ -43,7 +43,7 @@ body {
 html, body {
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .game-background {
@@ -98,5 +98,9 @@ html, body {
     .auteur {
         font-style: italic;
         
+    }
+
+    .game-holder {
+        overflow: scroll;
     }
 }

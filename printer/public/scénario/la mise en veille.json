@@ -8,13 +8,14 @@
         "start" : {
             "dialogue" : [
                     {
-                        "background" : "laptop_plugin",
+                        "background" : "veille_collegue_entre_bureau",
                         "personne" : "equipe_nr1",
-                        "text" : "Il est 12h ! Vous êtes installé à votre bureau, en pleine rédaction, lorsque votre collègue du bureau voisin vient vous proposer de venir déjeuner au restaurant administratif. Vous acceptez et reprendrez la rédaction après votre pause."
+                        "title" : "Collègue",
+                        "text" : "(entrant dans le bureau) Hey, il est midi ! Ça te dit de descendre manger au resto admin ?"
                     },
                     {
                         "background" : "laptop_plugin",
-                        "text" : "D'accord, je vais jeter un œil. Merci de me l'avoir signalé."
+                        "text" : "(regardant votre montre) Ah oui, déjà ! Attend-moi j'arrive."
                     },
                     {
                         "personne" : "Anne",
@@ -23,39 +24,41 @@
                     {
                         "type" : "quizz",
                         "title" : "Que répondriez vous ?",
+                        "text" : "En quittant leur poste, les agents ont le choix de verrouiller leur écran, de mettre leur ordinateur en veille, ou d'éteindre l'écran. C'est un petit geste pour la sécurité et l'économie d'énergie. Quelle action choisiriez-vous ?",
                         "réponse" : [
                             {
-                                "text" : "Oui, on a encore un pc en stock"
+                                "text" : "Vous verrouillez votre session pour pouvoir rapidement reprendre votre rédaction."
                             },
                             {
-                                "text" : "On va d'abord faire un diagnostique ?Un agent vient car la batterie de son ordinateur ne charge plus.",
+                                "text" : "Vous mettez en veille votre ordinateur et éteignez l’écran.",
+                                "réponse" : true
+                            },
+                            {
+                                "text" : "Vous éteignez votre ordinateur ainsi que l’écran.",
                                 "réponse" : true,
-                                "value" : 5
+                                "value" : 5,
+                                "next" : "bonne"
                             }
                         ]
                     }
                 ],
-                "next" : ["expertise" ]
+                "next" : ["fausse", "bonne"]
             },
-        "expertise" : {
-            "background" : "laptop_no_battery",
+        "fausse" : {
+            "background" : "bénéfice_veille",
             "dialogue" : [
                     {
                         
-                        "text" : " il s'avère que juste la batterie nécessite un remplacemente"
-                    },
+                        "text" : " Nope"
+                    }
+                ]
+        },
+        "bonne" : {
+            "background" : "bénéfice_veille",
+            "dialogue" : [
                     {
-                        "type" : "quizz",
-                        "réponse" : [
-                            {
-                                "text" : "Oui, on a encore un pc en stock"
-                            },
-                            {
-                                "text" : "On va d'abord faire un diagnostique ?Un agent vient car la batterie de son ordinateur ne charge plus.",
-                                "réponse" : true,
-                                "value" : 5
-                            }
-                        ]
+                        
+                        "text" : " good"
                     }
                 ]
         }

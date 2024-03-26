@@ -31,9 +31,11 @@ export class Animations {
   }
 
   start(){
-    let _a = new Date();
-    this.timestampStart = _a.getTime();
-    this.ended = false
+    if ( (!this.timestampStart) & (!this.ended) ){
+      let _a = new Date();
+      this.timestampStart = _a.getTime();
+      this.ended = false
+    }
   }
 
   step() {

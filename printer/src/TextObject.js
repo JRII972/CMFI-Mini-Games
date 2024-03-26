@@ -1,9 +1,10 @@
+import { Animations } from "./Animations.js";
 import {Vector2} from "./Vector2.js";
 import { Clickable } from "./helpers/HoverHelper.js";
 import { measureText } from "./helpers/helper.js";
 
 export class TextObject extends Clickable {
-    constructor({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, lineHeight, maxWidth, maxLine, startLine = 0, underline = false, surlignage, surlignageStyle, trim = true, wrapText = false}) {
+    constructor({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, lineHeight, maxWidth, maxLine, startLine = 0, underline = false, surlignage, surlignageStyle, trim = true, wrapText = false, animation}) {
         super({
           checkHover: false
         });
@@ -24,6 +25,9 @@ export class TextObject extends Clickable {
         this.stopNextSection = false
         this.surlignage = surlignage
         this.surlignageStyle = surlignageStyle
+        this.animation = animation
+        this._text = this.text
+
         if ( lineHeight == undefined) {
           if ( this.font.includes("px") ) {
             this.lineHeight = parseInt(this.font.split("px")[0]) * 1.3
@@ -40,6 +44,11 @@ export class TextObject extends Clickable {
     draw(ctx, x, y) {
       this.drawPosX = x + this.position.x;
       this.drawPosY = y + this.position.y;
+
+      if ( this.animation ) {
+        this.animation.step()
+        this.text = this._text.substr(0, Math.round(this._text.length * this.animation.actualStep / this.animation.nbStep) )
+      }
 
       if ( this.text == "" ) {
         this.width = 0
@@ -232,8 +241,8 @@ export class TextObject extends Clickable {
 }
 
 export class FillText extends TextObject {
-    constructor({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, underline = false, maxWidth, trim = true, wrapText = false, lineHeight, surlignage = false, surlignageStyle, maxLine, startLine = 0}) {
-        super({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, lineHeight, maxWidth, maxLine, startLine, underline, surlignage, surlignageStyle, trim, wrapText});
+    constructor({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, underline = false, maxWidth, trim = true, wrapText = false, lineHeight, surlignage = false, surlignageStyle, maxLine, startLine = 0, animation}) {
+        super({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, lineHeight, maxWidth, maxLine, startLine, underline, surlignage, surlignageStyle, trim, wrapText, animation});
       }
 
     drawText(ctx, text, x, y, maxWidth){
@@ -241,8 +250,8 @@ export class FillText extends TextObject {
     }
 }
 export class StrokeText extends TextObject {
-    constructor({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, underline = false, maxWidth, trim = true, wrapText = false, lineHeight, surlignage = false, surlignageStyle, maxLine, startLine = 0}) {
-      super({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, lineHeight, maxWidth, maxLine, startLine, underline, surlignage, surlignageStyle, trim, wrapText});
+    constructor({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, underline = false, maxWidth, trim = true, wrapText = false, lineHeight, surlignage = false, surlignageStyle, maxLine, startLine = 0, animation}) {
+      super({ text, position, font, textAlign, textBaseline, direction, fillStyle, strokeStyle, lineHeight, maxWidth, maxLine, startLine, underline, surlignage, surlignageStyle, trim, wrapText, animation});
       }
 
     drawText(ctx, text, x, y, maxWidth){
