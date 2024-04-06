@@ -75,3 +75,21 @@ a:hover {
       background-color: var(--darkest-blue);
     }
 }
+
+.input-wrapper {
+    padding: 5px;
+}
+
+#btn-proceed {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+    padding: .8em;
+    border-radius: 1em;
+    background-color: #112222;
+}
+
+#btn-proceed:hover {
+    color: #112222;
+    background-color: #dabb8f;
+}
