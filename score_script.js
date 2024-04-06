@@ -7,9 +7,9 @@ score_description = localStorage.getItem('score_description') ?? null
 
 if (last_score_movement) {
   if (last_score_movement > 0 ){
-    document.getElementById('score-movement').innerHTML = "<p>Vous avez gagner " + last_score_movement + " point(s) !</p>"
+    document.getElementById('score-movement').innerHTML = "<p>" + localStorage.getItem('pseudo') + " vous avez gagner " + last_score_movement + " point(s) !</p>"
   } else {
-    document.getElementById('score-movement').innerHTML = "<p>Vous avez perdu " + last_score_movement + " point(s) !</p>"
+    document.getElementById('score-movement').innerHTML = "<p>" + localStorage.getItem('pseudo') + " vous avez perdu " + last_score_movement + " point(s) !</p>"
   }
 }
 
@@ -18,6 +18,7 @@ if (score_description) {
 }
 
 document.getElementById('score-point').innerText = localStorage.getItem('score') ?? 0
+document.getElementById('pseudo').innerText = localStorage.getItem('pseudo') ?? ""
 
 localStorage.setItem('last_score_movement', 0)
 localStorage.setItem('score_description', "")

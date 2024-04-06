@@ -20,7 +20,7 @@ body {
     overflow: hidden;
 }
 
-h1 {
+h1, h3 {
     color: #e7e8aa;    
     text-align: center;
 }
@@ -83,6 +83,7 @@ a:hover {
 
     .score-point {
         margin-left: .5em;
+        margin-right: .5em;
     }
 }
 
